@@ -1,0 +1,8 @@
+[workspace]
+members = [
+    "aoc",
+]
+resolver = "3"
+
+[workspace.dependencies]
+aoc = {path = "./aoc"}
