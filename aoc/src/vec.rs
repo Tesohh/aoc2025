@@ -1,6 +1,6 @@
 use std::{
     fmt::Display,
-    ops::{Add, Div, Mul, Sub},
+    ops::{Add, Div, Mul, Neg, Sub},
 };
 
 #[derive(Debug, Hash, Copy, Clone, PartialEq, PartialOrd)]
@@ -80,6 +80,17 @@ impl Div for Vec2 {
         Self::Output {
             x: self.x / rhs.x,
             y: self.y / rhs.y,
+        }
+    }
+}
+
+impl Neg for Vec2 {
+    type Output = Self;
+
+    fn neg(self) -> Self::Output {
+        Self::Output {
+            x: -self.x,
+            y: -self.y,
         }
     }
 }
