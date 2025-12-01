@@ -1,6 +1,8 @@
 pub mod grid;
+pub use grid::*;
+
 pub mod vec;
 pub use vec::*;
 
-mod linalg;
-mod parse;
+pub mod input;
+pub use input::*;

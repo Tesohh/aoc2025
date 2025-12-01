@@ -1,4 +1,4 @@
-use crate::{Vec2, Vec2i, Vec2u};
+use crate::{Vec2, Vec2u};
 
 // assumes all rows are of same length.
 pub type Grid<T> = Vec<Vec<T>>;
@@ -47,9 +47,4 @@ impl<T> GridExt<T> for Vec<Vec<T>> {
         let vec: Vec2u = point.into();
         self.get_mut(vec.y)?.get_mut(vec.x)
     }
-}
-
-fn iwefj() {
-    let g: Grid<char> = vec![];
-    g.at((2, 2));
 }
