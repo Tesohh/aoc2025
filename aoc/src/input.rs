@@ -32,6 +32,10 @@ impl Input {
         self.file.split("\n").map(str::to_string).collect()
     }
 
+    pub fn splits(self, sep: &str) -> Vec<String> {
+        self.file.split(sep).map(str::to_string).collect()
+    }
+
     pub fn raw(self) -> String {
         self.file
     }
