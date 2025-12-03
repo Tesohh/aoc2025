@@ -1,3 +1,43 @@
+fn highest(bank: Vec<u32>, len: usize) -> usize {
+    let mut taken: Vec<(usize, u32)> = vec![];
+
+    for k in 1..=len {
+        let mut max = 0;
+        let mut index = 0;
+
+        let last_index = match taken.last() {
+            Some((i, _)) => *i,
+            None => 0,
+        };
+
+        for (i, joltage) in bank
+            .iter()
+            .take(bank.len() - len + k)
+            .skip(last_index)
+            .enumerate()
+        {
+            if *joltage > max {
+                max = *joltage;
+                index = i;
+            }
+        }
+
+        taken.push((index, max));
+        println!("[{}] {}", index, max)
+    }
+
+    0
+    // taken.iter().map(|(_, x)| **x as usize).sum()
+}
+
+// if !taken
+//     .iter()
+//     .map(|(other_i, _)| *other_i)
+//     .collect::<Vec<usize>>()
+//     .contains(&i)
+
+const LEN: usize = 2;
+
 fn main() {
     let banks: Vec<Vec<u32>> = aoc::Input::from_args()
         .lines()
@@ -12,24 +52,8 @@ fn main() {
     let mut sum = 0;
 
     for bank in banks {
-        let highest = bank.iter().enumerate().max_by_key(|x| x.1).unwrap();
-        let mut max = 0;
-
-        for (i, joltage) in bank.iter().enumerate() {
-            let total_joltage = if i < highest.0 {
-                joltage * 10 + highest.1
-            } else if i > highest.0 {
-                highest.1 * 10 + joltage
-            } else {
-                *highest.1
-            };
-
-            if total_joltage > max {
-                max = total_joltage
-            }
-        }
-
-        sum += max;
+        highest(bank, LEN);
+        println!();
     }
 
     dbg!(sum);
