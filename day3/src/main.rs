@@ -1,50 +1,41 @@
-fn highest(bank: Vec<u32>, len: usize) -> usize {
-    let mut taken: Vec<(usize, u32)> = vec![];
+fn highest(bank: Vec<u64>, digits: u64) -> u64 {
+    let len = bank.len() as u64;
 
-    for k in 1..=len {
-        let mut max = 0;
-        let mut index = 0;
+    let mut max_index: Option<u64> = None;
 
-        let last_index = match taken.last() {
-            Some((i, _)) => *i,
+    let mut number = 0;
+
+    for step in 1..=digits {
+        let start = match max_index {
+            Some(i) => i + 1, // +1?
             None => 0,
         };
 
-        for (i, joltage) in bank
-            .iter()
-            .take(bank.len() - len + k)
-            .skip(last_index)
-            .enumerate()
-        {
-            if *joltage > max {
-                max = *joltage;
-                index = i;
+        let end = len - digits + step;
+
+        let mut max = 0;
+        for i in start..end {
+            if bank[i as usize] > max {
+                max = bank[i as usize];
+                max_index = Some(i);
             }
         }
 
-        taken.push((index, max));
-        println!("[{}] {}", index, max)
+        number += max * 10_u64.pow((digits - step) as u32);
     }
 
-    0
-    // taken.iter().map(|(_, x)| **x as usize).sum()
+    number
 }
 
-// if !taken
-//     .iter()
-//     .map(|(other_i, _)| *other_i)
-//     .collect::<Vec<usize>>()
-//     .contains(&i)
-
-const LEN: usize = 2;
+const DIGITS: u64 = 12;
 
 fn main() {
-    let banks: Vec<Vec<u32>> = aoc::Input::from_args()
+    let banks: Vec<Vec<u64>> = aoc::Input::from_args()
         .lines()
         .iter()
         .map(|line| {
             line.chars()
-                .map(|char| char.to_digit(10).unwrap())
+                .map(|char| char.to_digit(10).unwrap() as u64)
                 .collect()
         })
         .collect();
@@ -52,8 +43,8 @@ fn main() {
     let mut sum = 0;
 
     for bank in banks {
-        highest(bank, LEN);
-        println!();
+        let highest = highest(bank, DIGITS);
+        sum += highest;
     }
 
     dbg!(sum);
