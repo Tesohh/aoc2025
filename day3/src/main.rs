@@ -1,34 +1,22 @@
-// Cex Pugliese Version
-fn highest(bank: Vec<u64>, digits: u64) -> u64 {
-    let len = bank.len() as u64;
-
-    let mut max_index: Option<u64> = None;
-
+fn highest(bank: &[u64], digits: usize) -> u64 {
+    let mut start = 0usize;
     let mut number = 0;
 
     for step in 1..=digits {
-        let start = match max_index {
-            Some(i) => i + 1, // +1?
-            None => 0,
-        };
+        let end = bank.len() - digits + step;
 
-        let end = len - digits + step;
+        let (max_index, &max) = bank[start..end]
+            .iter()
+            .enumerate()
+            .max_by_key(|(_, joltage)| **joltage)
+            .unwrap();
 
-        let mut max = 0;
-        for i in start..end {
-            if bank[i as usize] > max {
-                max = bank[i as usize];
-                max_index = Some(i);
-            }
-        }
-
+        start += max_index + 1;
         number += max * 10_u64.pow((digits - step) as u32);
     }
 
     number
 }
-
-const DIGITS: u64 = 12;
 
 fn main() {
     let banks: Vec<Vec<u64>> = aoc::Input::from_args()
@@ -41,12 +29,17 @@ fn main() {
         })
         .collect();
 
-    let mut sum = 0;
+    let mut sum1 = 0;
+    let mut sum2 = 0;
+    let mut sum3 = 0;
 
     for bank in banks {
-        let highest = highest(bank, DIGITS);
-        sum += highest;
+        sum1 += highest(&bank, 2);
+        sum2 += highest(&bank, 12);
+        sum3 += highest(&bank, 18);
     }
 
-    dbg!(sum);
+    dbg!(sum1);
+    dbg!(sum2);
+    dbg!(sum3);
 }
