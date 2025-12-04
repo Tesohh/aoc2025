@@ -12,11 +12,11 @@ pub trait GridExt<T> {
     fn safe_at(&self, point: impl TryInto<Vec2u>) -> Option<&T>;
     fn safe_at_mut(&mut self, point: impl TryInto<Vec2u>) -> Option<&mut T>;
 
-    fn at(&self, point: impl Into<Vec2u>) -> &T {
+    fn at(&self, point: impl TryInto<Vec2u>) -> &T {
         self.safe_at(point).unwrap()
     }
 
-    fn at_mut(&mut self, point: impl Into<Vec2u>) -> &mut T {
+    fn at_mut(&mut self, point: impl TryInto<Vec2u>) -> &mut T {
         self.safe_at_mut(point).unwrap()
     }
 }
