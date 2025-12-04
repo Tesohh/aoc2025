@@ -50,6 +50,30 @@ impl Vec2<isize> {
     pub const DIRECTIONS: [Vec2<isize>; 4] = [Vec2::UP, Vec2::DOWN, Vec2::LEFT, Vec2::RIGHT];
 }
 
+impl TryInto<Vec2u> for Vec2i {
+    type Error = ();
+
+    fn try_into(self) -> Result<Vec2u, Self::Error> {
+        if self.x < 0 || self.y < 0 {
+            Err(())
+        } else {
+            Ok(Vec2u::new(self.x as usize, self.y as usize))
+        }
+    }
+}
+
+impl TryInto<Vec2i> for Vec2u {
+    type Error = ();
+
+    fn try_into(self) -> Result<Vec2i, Self::Error> {
+        if self.x > isize::MAX as usize || self.y > isize::MAX as usize {
+            Err(())
+        } else {
+            Ok(Vec2i::new(self.x as isize, self.y as isize))
+        }
+    }
+}
+
 impl<T: Number> Vec2<T> {
     pub const fn new(x: T, y: T) -> Self {
         Vec2 { x, y }

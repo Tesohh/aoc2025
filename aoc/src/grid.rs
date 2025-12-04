@@ -7,10 +7,10 @@ pub trait GridExt<T> {
     fn width(&self) -> usize;
     fn height(&self) -> usize;
 
-    fn is_out(&self, point: impl Into<Vec2u>) -> bool;
+    fn is_out(&self, point: impl TryInto<Vec2u>) -> bool;
 
-    fn safe_at(&self, point: impl Into<Vec2u>) -> Option<&T>;
-    fn safe_at_mut(&mut self, point: impl Into<Vec2u>) -> Option<&mut T>;
+    fn safe_at(&self, point: impl TryInto<Vec2u>) -> Option<&T>;
+    fn safe_at_mut(&mut self, point: impl TryInto<Vec2u>) -> Option<&mut T>;
 
     fn at(&self, point: impl Into<Vec2u>) -> &T {
         self.safe_at(point).unwrap()
@@ -30,21 +30,38 @@ impl<T> GridExt<T> for Vec<Vec<T>> {
         self[0].len()
     }
 
-    fn is_out(&self, point: impl Into<Vec2u>) -> bool {
-        let Vec2 { x, y } = point.into();
+    fn is_out(&self, point: impl TryInto<Vec2u>) -> bool {
+        let Ok(Vec2 { x, y }) = point.try_into() else {
+            return false;
+        };
+
         let x_out = x > self.height() - 1;
         let y_out = y > self.width() - 1;
 
         x_out || y_out
     }
 
-    fn safe_at(&self, point: impl Into<Vec2u>) -> Option<&T> {
-        let vec: Vec2u = point.into();
+    fn safe_at(&self, point: impl TryInto<Vec2u>) -> Option<&T> {
+        let Ok(vec) = point.try_into() else {
+            return None;
+        };
+
+        if self.is_out(vec) {
+            return None;
+        }
+
         self.get(vec.y)?.get(vec.x)
     }
 
-    fn safe_at_mut(&mut self, point: impl Into<Vec2u>) -> Option<&mut T> {
-        let vec: Vec2u = point.into();
+    fn safe_at_mut(&mut self, point: impl TryInto<Vec2u>) -> Option<&mut T> {
+        let Ok(vec) = point.try_into() else {
+            return None;
+        };
+
+        if self.is_out(vec) {
+            return None;
+        }
+
         self.get_mut(vec.y)?.get_mut(vec.x)
     }
 }

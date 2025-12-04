@@ -19,6 +19,12 @@ impl Input {
         Self::from_path(path)
     }
 
+    pub fn from_string(s: &str) -> Self {
+        Input {
+            file: s.to_string(),
+        }
+    }
+
     pub fn parts(self) -> Vec<Self> {
         self.file
             .split("\n\n")
