@@ -41,15 +41,32 @@ fn check_adjacent_rolls(grid: &Grid<char>, cell: Vec2u) -> usize {
 const ALLOWED_ROLLS: usize = 4;
 
 fn main() {
-    let grid = aoc::Input::from_args().char_grid();
+    let mut grid = aoc::Input::from_args().char_grid();
+    let initial_rolls_len = get_rolls(&grid).len();
+
+    let mut old_rolls: Vec<Vec2u> = vec![];
+    loop {
+        let rolls = get_rolls(&grid);
+        if rolls == old_rolls {
+            break;
+        }
+        old_rolls = rolls.clone();
+
+        let valid_rolls: Vec<Vec2u> = rolls
+            .into_iter()
+            .filter(|&cell| check_adjacent_rolls(&grid, cell) < ALLOWED_ROLLS)
+            .collect();
+
+        for roll in valid_rolls {
+            match grid.safe_at_mut(roll) {
+                Some(cell) => *cell = 'x',
+                None => todo!(),
+            };
+        }
+    }
 
     let rolls = get_rolls(&grid);
-    let valid_rolls: Vec<Vec2u> = rolls
-        .into_iter()
-        .filter(|&cell| check_adjacent_rolls(&grid, cell) < ALLOWED_ROLLS)
-        .collect();
-
-    println!("{}", valid_rolls.len())
+    println!("{}", initial_rolls_len - rolls.len())
 }
 
 #[cfg(test)]
