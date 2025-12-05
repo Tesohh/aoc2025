@@ -2,7 +2,7 @@ use std::{env, fs};
 
 use crate::grid::Grid;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Input {
     file: String,
 }
@@ -25,9 +25,9 @@ impl Input {
         }
     }
 
-    pub fn parts(self) -> Vec<Self> {
+    pub fn parts(self, sep: &str) -> Vec<Self> {
         self.file
-            .split("\n\n")
+            .split(sep)
             .map(|f| Input {
                 file: f.to_string(),
             })
