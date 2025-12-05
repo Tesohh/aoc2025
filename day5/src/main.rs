@@ -1,9 +1,49 @@
-use owo_colors::OwoColorize;
+use itertools::Itertools;
+
+fn part1(ranges: &[(usize, usize)], foods: &[usize]) -> usize {
+    foods
+        .iter()
+        .filter(|&&id| ranges.iter().any(|&(start, end)| id >= start && id <= end))
+        .count()
+}
+
+fn range_includes(range: &(usize, usize), value: usize) -> bool {
+    range.0 <= value && value <= range.1
+}
+
+fn sum_ranges(ranges: &[(usize, usize)]) -> usize {
+    ranges.iter().map(|&(start, end)| end - start + 1).sum()
+}
+
+fn part2(ranges: &[(usize, usize)]) -> usize {
+    let ranges = ranges.iter().sorted_by_key(|&(start, _)| start);
+    let mut merged_ranges: Vec<(usize, usize)> = vec![];
+
+    for &my_range in ranges {
+        let Some(other_range) = merged_ranges.last_mut() else {
+            merged_ranges.push(my_range);
+            continue;
+        };
+
+        if range_includes(other_range, my_range.0) {
+            if my_range.1 > other_range.1 {
+                other_range.1 = my_range.1
+            }
+        } else {
+            merged_ranges.push(my_range);
+        }
+    }
+
+    for &my_range in &merged_ranges {
+        println!("{}-{}", my_range.0, my_range.1)
+    }
+
+    sum_ranges(&merged_ranges)
+}
 
 fn main() {
     let parts = aoc::Input::from_args().parts("\n\n");
     let ranges: Vec<(usize, usize)> = parts[0]
-        .clone()
         .lines()
         .iter()
         .filter_map(|s| s.split_once("-"))
@@ -11,83 +51,24 @@ fn main() {
         .collect();
 
     let foods: Vec<usize> = parts[1]
-        .clone()
         .lines()
         .iter()
         .map(|s| s.parse().unwrap())
         .collect();
 
-    let mut counter = 0;
-    for id in foods {
-        let mut ok = false;
-        for &(start, end) in &ranges {
-            if id >= start && id <= end {
-                ok = true
-            }
-        }
+    println!("part1: {}", part1(&ranges, &foods));
+    println!("part2: {}", part2(&ranges));
+}
 
-        if ok {
-            counter += 1
-        }
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_includes() {
+        assert!(range_includes(&(1, 3), 2));
+        assert!(range_includes(&(4, 4), 4));
+        assert!(range_includes(&(10, 20), 12));
+        assert!(!range_includes(&(10, 20), 9));
     }
-
-    dbg!(counter);
-    // ranges.sort_by_key(|(start, _)| *start);
-
-    let mut corrected_ranges: Vec<(usize, usize)> = vec![];
-    for &(my_start, my_end) in &ranges {
-        let mut corrected = (my_start, my_end);
-
-        for &(other_start, other_end) in &corrected_ranges {
-            if my_start >= other_start && my_start <= other_end {
-                println!(
-                    "correct {} ({}) -> ({})",
-                    "start".red(),
-                    corrected.0,
-                    other_end + 1
-                );
-                corrected.0 = other_end + 1
-            }
-
-            if my_end >= other_start && my_end <= other_end {
-                println!(
-                    "correct {}   ({}) -> ({})",
-                    "end".blue(),
-                    corrected.1,
-                    other_start - 1
-                );
-
-                if other_start == 0 {
-                    panic!("NEGATIVE")
-                }
-                corrected.1 = other_start - 1
-            }
-        }
-
-        if corrected != (my_start, my_end) {
-            println!(
-                "corrected old({}, {}) -> new({}, {})",
-                my_start, my_end, corrected.0, corrected.1
-            );
-        }
-        if corrected.0 > corrected.1 {
-            continue;
-        }
-
-        corrected_ranges.push(corrected);
-    }
-
-    let mut sum = 0;
-    for &(start, end) in &corrected_ranges {
-        print!("{start}-{end}");
-        if end < start {
-            print!(" (Oops)");
-            sum -= start - end - 1
-        } else {
-            sum += end - start + 1
-        }
-        println!();
-    }
-
-    dbg!(sum);
 }

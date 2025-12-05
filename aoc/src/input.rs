@@ -25,7 +25,7 @@ impl Input {
         }
     }
 
-    pub fn parts(self, sep: &str) -> Vec<Self> {
+    pub fn parts(&self, sep: &str) -> Vec<Self> {
         self.file
             .split(sep)
             .map(|f| Input {
@@ -34,11 +34,11 @@ impl Input {
             .collect()
     }
 
-    pub fn lines(self) -> Vec<String> {
+    pub fn lines(&self) -> Vec<String> {
         self.file.split("\n").map(str::to_string).collect()
     }
 
-    pub fn splits(self, sep: &str) -> Vec<String> {
+    pub fn splits(&self, sep: &str) -> Vec<String> {
         self.file.split(sep).map(str::to_string).collect()
     }
 
@@ -46,14 +46,14 @@ impl Input {
         self.file
     }
 
-    pub fn char_grid(self) -> Grid<char> {
+    pub fn char_grid(&self) -> Grid<char> {
         self.lines()
             .into_iter()
             .map(|s| s.chars().collect())
             .collect()
     }
 
-    pub fn i64_grid(self) -> Grid<i64> {
+    pub fn i64_grid(&self) -> Grid<i64> {
         self.char_grid()
             .into_iter()
             .map(|vec_char| {
