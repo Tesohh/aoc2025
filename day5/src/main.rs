@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use owo_colors::OwoColorize;
 
 fn main() {
     let parts = aoc::Input::from_args().parts("\n\n");
@@ -30,7 +30,9 @@ fn main() {
             counter += 1
         }
     }
+
     dbg!(counter);
+    // ranges.sort_by_key(|(start, _)| *start);
 
     let mut corrected_ranges: Vec<(usize, usize)> = vec![];
     for &(my_start, my_end) in &ranges {
@@ -38,42 +40,53 @@ fn main() {
 
         for &(other_start, other_end) in &corrected_ranges {
             if my_start >= other_start && my_start <= other_end {
+                println!(
+                    "correct {} ({}) -> ({})",
+                    "start".red(),
+                    corrected.0,
+                    other_end + 1
+                );
                 corrected.0 = other_end + 1
             }
 
             if my_end >= other_start && my_end <= other_end {
+                println!(
+                    "correct {}   ({}) -> ({})",
+                    "end".blue(),
+                    corrected.1,
+                    other_start - 1
+                );
+
                 if other_start == 0 {
                     panic!("NEGATIVE")
                 }
                 corrected.1 = other_start - 1
-                // check for negative?
             }
         }
 
-        // if corrected.0 > corrected.1 {
-        //     corrected = (corrected.1, corrected.0)
-        // }
-
         if corrected != (my_start, my_end) {
             println!(
-                "corrected ({}, {}) -> ({}, {})",
+                "corrected old({}, {}) -> new({}, {})",
                 my_start, my_end, corrected.0, corrected.1
-            )
+            );
+        }
+        if corrected.0 > corrected.1 {
+            continue;
         }
 
         corrected_ranges.push(corrected);
     }
 
-    dbg!(&corrected_ranges);
-
     let mut sum = 0;
     for &(start, end) in &corrected_ranges {
+        print!("{start}-{end}");
         if end < start {
-            println!("Oops {end} < {start}");
+            print!(" (Oops)");
             sum -= start - end - 1
         } else {
             sum += end - start + 1
         }
+        println!();
     }
 
     dbg!(sum);
