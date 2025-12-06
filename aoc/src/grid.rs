@@ -28,11 +28,11 @@ pub trait GridExt<T: Clone> {
 
 impl<T: Clone> GridExt<T> for Vec<Vec<T>> {
     fn width(&self) -> usize {
-        self.len()
+        self[0].len()
     }
 
     fn height(&self) -> usize {
-        self[0].len()
+        self.len()
     }
 
     fn is_out(&self, point: impl TryInto<Vec2u>) -> bool {
@@ -42,8 +42,8 @@ impl<T: Clone> GridExt<T> for Vec<Vec<T>> {
 
         // if self.height() == 0 || self.height() == 0 {}
 
-        let x_out = x > self.height() - 1;
-        let y_out = y > self.width() - 1;
+        let x_out = x > self.width() - 1;
+        let y_out = y > self.height() - 1;
 
         x_out || y_out
     }
@@ -75,7 +75,7 @@ impl<T: Clone> GridExt<T> for Vec<Vec<T>> {
     fn transpose(&self) -> Grid<T> {
         let mut transposed: Grid<T> = vec![];
 
-        for _ in 0..self.height() {
+        for _ in 0..self.width() {
             transposed.push(vec![]);
         }
 

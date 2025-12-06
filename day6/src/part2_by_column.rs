@@ -5,16 +5,15 @@ use crate::{Calculation, Op};
 pub fn part2_by_column(grid: &Grid<char>) -> usize {
     let mut grand_total = 0;
 
-    // why in 0..grid.height()??? my own library is confusing me
     let mut calc = Calculation {
         operands: vec![],
         operation: Op::None,
     };
 
-    for x in 0..grid.height() {
+    for x in 0..grid.width() {
         let mut buf = String::new();
 
-        for y in 0..grid.width() {
+        for y in 0..grid.height() {
             let cell = grid.at((x, y));
 
             if cell.is_ascii_digit() {
