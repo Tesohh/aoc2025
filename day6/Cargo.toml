@@ -7,3 +7,10 @@ edition = "2024"
 aoc.workspace = true
 owo-colors.workspace = true
 itertools.workspace = true
+
+[dev-dependencies]
+divan.workspace = true
+
+[[bench]]
+name = "benchmark"
+harness = false

@@ -4,7 +4,9 @@ use crate::{Vec2, Vec2u};
 pub type Grid<T> = Vec<Vec<T>>;
 
 pub trait GridExt<T: Clone> {
+    #[doc(alias = "cols")]
     fn width(&self) -> usize;
+    #[doc(alias = "rows")]
     fn height(&self) -> usize;
 
     fn is_out(&self, point: impl TryInto<Vec2u>) -> bool;

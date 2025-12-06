@@ -8,3 +8,4 @@ resolver = "3"
 aoc = {path = "./aoc"}
 owo-colors = "4"
 itertools = "0.14.0"
+divan = "0.1.21"
