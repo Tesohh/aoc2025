@@ -22,6 +22,16 @@ pub trait GridExt<T: Clone> {
         self.safe_at_mut(point).unwrap()
     }
 
+    fn safe_row(&self, y: usize) -> Option<&Vec<T>>;
+    fn safe_col(&self, x: usize) -> Option<Vec<&T>>;
+
+    fn row(&self, y: usize) -> &Vec<T> {
+        self.safe_row(y).unwrap()
+    }
+    fn col(&self, x: usize) -> Vec<&T> {
+        self.safe_col(x).unwrap()
+    }
+
     // creates a second grid where every element v_{xy} becomes v_{yx}
     fn transpose(&self) -> Grid<T>;
 }
@@ -72,6 +82,22 @@ impl<T: Clone> GridExt<T> for Vec<Vec<T>> {
         self.get_mut(vec.y)?.get_mut(vec.x)
     }
 
+    fn safe_row(&self, y: usize) -> Option<&Vec<T>> {
+        self.get(y)
+    }
+
+    fn safe_col(&self, x: usize) -> Option<Vec<&T>> {
+        if self.width() < x {
+            None
+        } else {
+            Some(
+                self.iter()
+                    .map(|row| row.get(x).unwrap_or_else(|| unreachable!()))
+                    .collect(),
+            )
+        }
+    }
+
     fn transpose(&self) -> Grid<T> {
         let mut transposed: Grid<T> = vec![];
 
@@ -98,5 +124,19 @@ mod tests {
         let grid = vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]];
         let expect = vec![vec![1, 4, 7], vec![2, 5, 8], vec![3, 6, 9]];
         assert_eq!(grid.transpose(), expect);
+    }
+
+    #[test]
+    fn test_col() {
+        let grid = vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]];
+
+        let expect = vec![&1, &4, &7];
+        assert_eq!(grid.col(0), expect);
+
+        let expect = vec![&2, &5, &8];
+        assert_eq!(grid.col(1), expect);
+
+        let expect = vec![&3, &6, &9];
+        assert_eq!(grid.col(2), expect);
     }
 }
