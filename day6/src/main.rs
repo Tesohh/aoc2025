@@ -1,7 +1,7 @@
 use aoc::{Grid, GridExt};
 use itertools::Itertools;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum Op {
     None,
     Add,
@@ -81,6 +81,21 @@ fn split_string_on_multiple_pos(s: &str, positions: &[usize]) -> Vec<String> {
     splits
 }
 
+fn to_ceph_numbers(raw_numbers: &[String]) -> Vec<usize> {
+    let digits = raw_numbers.first().unwrap().len();
+    let mut ceph_numbers = vec![0; digits];
+
+    for i in 0..digits {
+        for (x, raw) in raw_numbers.iter().enumerate() {
+            let size = raw.trim().len();
+            let digit = raw.chars().nth(i).unwrap().to_digit(10).unwrap_or(0) as usize;
+            ceph_numbers[i] += digit * 10_usize.pow((digits - (size - digits) - x - 1) as u32);
+        }
+    }
+
+    ceph_numbers
+}
+
 fn part2(lines: &[String]) -> usize {
     // find all positions where we have a * or +. that is where the columns start.
     let op_positions = lines
@@ -92,6 +107,18 @@ fn part2(lines: &[String]) -> usize {
         .map(|(i, _)| i)
         .collect_vec();
 
+    let operations = lines
+        .last()
+        .unwrap()
+        .split(" ")
+        .filter(|s| !s.is_empty())
+        .map(|s| match s {
+            "+" => Op::Add,
+            "*" => Op::Mult,
+            _ => panic!("invalid operation"),
+        })
+        .collect_vec();
+
     // split all lines on the op positions and build a Grid<&str>
     // where each line represents an operation
     let mut grid: Grid<String> = vec![];
@@ -99,11 +126,28 @@ fn part2(lines: &[String]) -> usize {
         grid.push(split_string_on_multiple_pos(line, &op_positions[1..]));
     }
 
+    // now we have a grid where every row contains all number strings in a calculation
+    // note: the numbers here are in "human" form, not cephalopod form
     let grid = grid.transpose();
+    dbg!(&grid);
 
-    // build operations.
+    // build cephalopod numbers
+    let mut grand_total = 0;
 
-    0
+    for (y, row) in grid.iter().enumerate() {
+        let ceph_numbers = to_ceph_numbers(row);
+        dbg!(&ceph_numbers);
+        let calc = Calculation {
+            operands: ceph_numbers,
+            operation: operations[y].clone(),
+        };
+
+        dbg!(&calc.operation);
+        dbg!(calc.total());
+        println!()
+    }
+
+    grand_total
 }
 
 fn main() {
@@ -121,6 +165,24 @@ mod tests {
         assert_eq!(
             split_string_on_multiple_pos("gu ten morgen", &[3, 7]),
             ["gu", "ten", "morgen"]
+        );
+    }
+
+    #[test]
+    fn test_ceph_numbers() {
+        assert_eq!(
+            to_ceph_numbers(&["64 ".into(), "23 ".into(), "314".into()]),
+            [623, 431, 4]
+        );
+
+        assert_eq!(
+            to_ceph_numbers(&[" 51".into(), "387".into(), "215".into()]),
+            [32, 581, 175]
+        );
+
+        assert_eq!(
+            to_ceph_numbers(&["328".into(), "64 ".into(), "98 ".into()]),
+            [369, 248, 8]
         );
     }
 }
