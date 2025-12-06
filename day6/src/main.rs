@@ -82,18 +82,18 @@ fn split_string_on_multiple_pos(s: &str, positions: &[usize]) -> Vec<String> {
 }
 
 fn to_ceph_numbers(raw_numbers: &[String]) -> Vec<usize> {
-    let digits = raw_numbers.first().unwrap().len();
-    let mut ceph_numbers = vec![0; digits];
+    let mini_grid = raw_numbers
+        .iter()
+        .map(|s| s.chars().collect_vec())
+        .collect_vec();
 
-    for i in 0..digits {
-        for (x, raw) in raw_numbers.iter().enumerate() {
-            let size = raw.trim().len();
-            let digit = raw.chars().nth(i).unwrap().to_digit(10).unwrap_or(0) as usize;
-            ceph_numbers[i] += digit * 10_usize.pow((digits - (size - digits) - x - 1) as u32);
-        }
-    }
+    let mini_grid = mini_grid.transpose();
 
-    ceph_numbers
+    mini_grid
+        .iter()
+        .map(|chars| chars.iter().collect::<String>().trim().to_string())
+        .map(|s| s.parse::<usize>().unwrap())
+        .collect_vec()
 }
 
 fn part2(lines: &[String]) -> usize {
@@ -143,7 +143,7 @@ fn part2(lines: &[String]) -> usize {
         };
 
         dbg!(&calc.operation);
-        dbg!(calc.total());
+        grand_total += dbg!(calc.total());
         println!()
     }
 
