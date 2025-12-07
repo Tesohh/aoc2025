@@ -29,7 +29,7 @@ impl<T> Number for T where
 {
 }
 
-#[derive(Debug, Hash, Copy, Clone, PartialEq, PartialOrd)]
+#[derive(Debug, Hash, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Vec2<T: Number> {
     pub x: T,
     pub y: T,

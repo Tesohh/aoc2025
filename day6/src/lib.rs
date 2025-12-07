@@ -1,5 +1,6 @@
 mod part1;
 mod part2_by_column;
+mod part2_by_grid_column;
 mod part2_transpose;
 
 pub use part1::*;
