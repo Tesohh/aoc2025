@@ -16,5 +16,10 @@ fn main() {
         })
         .collect();
 
-    println!("part1: {}", part1::part1(&vectors));
+    let top_size = match vectors.len() {
+        20 => 10,
+        1000 => 1000,
+        _ => 10,
+    };
+    println!("part1: {}", part1::part1(&vectors, top_size));
 }
