@@ -3,6 +3,14 @@ use std::collections::HashSet;
 use aoc::Vec3i;
 use itertools::Itertools;
 
+#[derive(Debug)]
+enum Top10Case {
+    Push(usize, Vec3i), // a is in set S. push b into S OR b is in set S. push a into S
+    Both,               // a,b are in set S. don't do anything
+    New,                // a,b are in no set. create a new set with both
+    Merge(usize, usize), // a,b are in different sets. merge the sets
+}
+
 pub fn part1(vectors: &[Vec3i]) -> usize {
     // vectors.sort_by(|a, b| a.squared_distance(*b).cmp(&b.squared_distance(*a)));
     // dbg!(vectors);
@@ -25,44 +33,42 @@ pub fn part1(vectors: &[Vec3i]) -> usize {
 
     let mut circuits: Vec<HashSet<Vec3i>> = vec![];
     for &(a, b, _) in top10 {
-        // Cases:
-        // LHS:    a is in set S. push b into S
-        // RHS:    b is in set S. push a into S
-        // BOTH:   a,b are in set S. don't do anything
-        // NEW:    a,b are in no set. create a new set with both
-        // MERGE:  a,b are in different sets. merge the sets
+        let mut case = Top10Case::New;
 
-        // let mut index: Option<usize> = None;
-        // let mut target: Option<Vec3i> = None;
-        // let mut push = true;
-        //
-        // for (i, set) in circuits.iter().enumerate() {
-        //     if set.contains(&a) && set.contains(&b) {
-        //         push = false;
-        //         break;
-        //     } else if set.contains(&a) {
-        //         index = Some(i);
-        //         target = Some(b);
-        //         break;
-        //     } else if set.contains(&b) {
-        //         index = Some(i);
-        //         target = Some(a);
-        //         break;
-        //     }
-        // }
+        for (i, set) in circuits.iter().enumerate() {
+            if set.contains(&a) && set.contains(&b) {
+                case = Top10Case::Both;
+                break; // should be fine
+            } else if let Top10Case::Push(j, _) = case
+                && (set.contains(&a) || set.contains(&b))
+            {
+                case = Top10Case::Merge(i, j);
+            } else if set.contains(&a) {
+                case = Top10Case::Push(i, b);
+            } else if set.contains(&b) {
+                case = Top10Case::Push(i, a);
+            }
+        }
 
-        // if let Some(index) = index {
-        //     circuits.get_mut(index).unwrap().insert(target.unwrap());
-        // } else if push {
-        //     let mut set = HashSet::new();
-        //     set.insert(a);
-        //     set.insert(b);
-        //     circuits.push(set);
-        // } else if !push {
-        //     println!("Not pushing pair {} {}", a, b)
-        // }
+        println!("{:?} ({} {})", &case, &a, &b);
+
+        match case {
+            Top10Case::Push(i, vec3) => {
+                circuits.get_mut(i).unwrap().insert(vec3);
+            }
+            Top10Case::Both => {}
+            Top10Case::New => {
+                let mut set = HashSet::new();
+                set.insert(a);
+                set.insert(b);
+                circuits.push(set);
+            }
+            Top10Case::Merge(i, j) => {
+                let set_b = circuits.swap_remove(j);
+                circuits.get_mut(i).unwrap().extend(set_b);
+            }
+        }
     }
-    // maybe we need to check the "dotted lines" (when both a and b are already in the circuit)
 
     circuits.sort_by_key(|set| set.len());
     circuits.reverse();
