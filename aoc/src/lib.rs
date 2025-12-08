@@ -6,3 +6,6 @@ pub use vec::*;
 
 pub mod input;
 pub use input::*;
+
+pub mod vec3;
+pub use vec3::*;
