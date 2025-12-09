@@ -3,6 +3,7 @@ use std::{collections::HashSet, hash::Hash};
 use aoc::Vec3i;
 
 pub mod part1;
+pub mod part2;
 
 pub fn find_all_distances(vectors: &[Vec3i]) -> Vec<(Vec3i, Vec3i, isize)> {
     let mut product: Vec<(Vec3i, Vec3i, isize)> = vec![];
@@ -27,6 +28,12 @@ where
     all_sets.get_mut(mergee_index).unwrap().extend(set_b);
 }
 
+pub fn print_product(product: &[(Vec3i, Vec3i, isize)]) {
+    for (a, b, dist) in product {
+        println!("{} --> {} ({})", a, b, dist)
+    }
+}
+
 #[derive(Debug)]
 enum Top10Case {
     Push(usize, Vec3i), // a is in set S. push b into S OR b is in set S. push a into S
@@ -35,9 +42,11 @@ enum Top10Case {
     Merge(usize, usize), // a,b are in different sets. merge the sets
 }
 
-pub fn connect_boxes(links: Vec<(Vec3i, Vec3i)>) -> Vec<HashSet<Vec3i>> {
+pub fn connect_boxes(links: &Vec<(Vec3i, Vec3i)>) -> (Vec<HashSet<Vec3i>>, Vec<(Vec3i, Vec3i)>) {
     let mut circuits: Vec<HashSet<Vec3i>> = vec![];
-    for (a, b) in links {
+    let mut connections: Vec<(Vec3i, Vec3i)> = vec![];
+
+    for &(a, b) in links {
         let mut case = Top10Case::New;
 
         for (i, set) in circuits.iter().enumerate() {
@@ -58,6 +67,7 @@ pub fn connect_boxes(links: Vec<(Vec3i, Vec3i)>) -> Vec<HashSet<Vec3i>> {
         match case {
             Top10Case::Push(i, vec3) => {
                 circuits.get_mut(i).unwrap().insert(vec3);
+                connections.push((a, b));
             }
             Top10Case::Both => {}
             Top10Case::New => {
@@ -65,12 +75,14 @@ pub fn connect_boxes(links: Vec<(Vec3i, Vec3i)>) -> Vec<HashSet<Vec3i>> {
                 set.insert(a);
                 set.insert(b);
                 circuits.push(set);
+                connections.push((a, b));
             }
             Top10Case::Merge(i, j) => {
                 merge_sets(&mut circuits, i, j);
+                connections.push((a, b));
             }
         }
     }
 
-    circuits
+    (circuits, connections)
 }

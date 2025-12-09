@@ -1,5 +1,5 @@
 use aoc::Vec3i;
-use day8::part1;
+use day8::{part1, part2};
 
 fn main() {
     let vectors: Vec<Vec3i> = aoc::Input::from_args()
@@ -22,4 +22,5 @@ fn main() {
         _ => 10,
     };
     println!("part1: {}", part1::part1(&vectors, top_size));
+    println!("part2: {}", part2::part2(&vectors));
 }

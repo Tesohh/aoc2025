@@ -14,8 +14,7 @@ pub fn part1(vectors: &[Vec3i], top_size: usize) -> usize {
         .map(|&(a, b, _)| (a, b))
         .collect_vec();
 
-    let mut circuits = crate::connect_boxes(top10);
-
+    let (mut circuits, _) = crate::connect_boxes(&top10);
     circuits.sort_by_key(|set| set.len());
     circuits.reverse();
 
