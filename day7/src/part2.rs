@@ -1,5 +1,3 @@
-use std::collections::HashSet;
-
 use aoc::{Grid, GridExt, Vec2i, Vec2u};
 
 #[derive(Debug, PartialEq, Eq, Hash)]
