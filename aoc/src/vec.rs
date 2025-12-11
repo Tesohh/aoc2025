@@ -1,5 +1,5 @@
 use std::{
-    fmt::Display,
+    fmt::{Debug, Display},
     ops::{Add, Div, Mul, Neg, Sub},
 };
 
@@ -29,7 +29,7 @@ impl<T> Number for T where
 {
 }
 
-#[derive(Debug, Hash, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Hash, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Vec2<T: Number> {
     pub x: T,
     pub y: T,
@@ -62,6 +62,12 @@ impl TryInto<Vec2u> for Vec2i {
     }
 }
 
+impl<T: Number> Debug for Vec2<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Vec2{{{}, {}}}", self.x, self.y)
+    }
+}
+
 impl TryInto<Vec2i> for Vec2u {
     type Error = ();
 
@@ -81,6 +87,13 @@ impl<T: Number> Vec2<T> {
 
     pub const fn splat(v: T) -> Self {
         Vec2 { x: v, y: v }
+    }
+
+    // to get true distance, sqrt it
+    pub fn squared_distance(&self, rhs: Self) -> T {
+        let side1 = (self.x - rhs.x) * (self.x - rhs.x);
+        let side2 = (self.y - rhs.y) * (self.y - rhs.y);
+        side1 + side2
     }
 }
 

@@ -64,6 +64,7 @@ pub fn connect_boxes(links: &Vec<(Vec3i, Vec3i)>) -> (Vec<HashSet<Vec3i>>, Vec<(
             }
         }
 
+        println!("{:?} {} {}", case, a, b);
         match case {
             Top10Case::Push(i, vec3) => {
                 circuits.get_mut(i).unwrap().insert(vec3);
@@ -83,6 +84,8 @@ pub fn connect_boxes(links: &Vec<(Vec3i, Vec3i)>) -> (Vec<HashSet<Vec3i>>, Vec<(
             }
         }
     }
+
+    // maybe stop the algorithm when we have 1 circuit of 1000 boxes
 
     (circuits, connections)
 }

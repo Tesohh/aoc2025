@@ -1,3 +1,4 @@
+use std::fmt::Debug;
 use std::{
     fmt::Display,
     ops::{Add, Div, Mul, Neg, Sub},
@@ -5,7 +6,7 @@ use std::{
 
 use crate::Number;
 
-#[derive(Debug, Hash, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Hash, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Vec3<T: Number> {
     pub x: T,
     pub y: T,
@@ -82,6 +83,12 @@ impl<T: Number> From<(T, T, T)> for Vec3<T> {
 impl<T: Number> Display for Vec3<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "({}, {}, {})", self.x, self.y, self.z)
+    }
+}
+
+impl<T: Number> Debug for Vec3<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Vec3{{{}, {}, {}}}", self.x, self.y, self.z)
     }
 }
 
