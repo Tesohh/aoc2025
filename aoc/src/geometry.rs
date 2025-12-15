@@ -16,6 +16,7 @@ impl<T: Scalar> Line2D<T> {
     pub fn new(p: Vec2<T>, q: Vec2<T>) -> Self {
         Self(p, q)
     }
+
     /// returns the length of this line, squared.
     /// if you need the length not squared, either sqrt it yourself
     /// or use the `length` method on `Line2D<T: Number + Float>`
@@ -30,36 +31,28 @@ impl<T: Scalar> Line2D<T> {
             && p.x >= min(self.0.x, self.1.x)
             && p.y <= max(self.0.y, self.1.y)
             && p.y >= min(self.0.y, self.1.y)
-            && orientation(self.0, self.1, p) == Orientation::Collinear
     }
 
-    // https://www.geeksforgeeks.org/dsa/check-if-two-given-line-segments-intersect/
+    // adapted from https://blog.jverkamp.com/2025/12/09/aoc-2025-day-9-polygoninator/
+    // and https://www.geeksforgeeks.org/dsa/check-if-two-given-line-segments-intersect/
+    // the rest of the challenge i did by myself
     pub fn intersects(&self, other: &Self) -> bool {
-        // in gfg: points[0] = self, points[1] = other
-        let orientations = [
-            orientation(self.0, self.1, other.0),
-            orientation(self.0, self.1, other.1),
-            orientation(other.0, other.1, self.0),
-            orientation(other.0, other.1, self.1),
-        ];
+        let d1 = (self.1.x - self.0.x) * (other.0.y - self.0.y)
+            - (self.1.y - self.0.y) * (other.0.x - self.0.x);
+        let d2 = (self.1.x - self.0.x) * (other.1.y - self.0.y)
+            - (self.1.y - self.0.y) * (other.1.x - self.0.x);
+        let d3 = (other.1.x - other.0.x) * (self.0.y - other.0.y)
+            - (other.1.y - other.0.y) * (self.0.x - other.0.x);
+        let d4 = (other.1.x - other.0.x) * (self.1.y - other.0.y)
+            - (other.1.y - other.0.y) * (self.1.x - other.0.x);
 
-        // general case
-        if orientations[0] != orientations[1] && orientations[2] != orientations[3] {
+        if ((d1 > T::zero() && d2 < T::zero()) || (d1 < T::zero() && d2 > T::zero()))
+            && ((d3 > T::zero() && d4 < T::zero()) || (d3 < T::zero() && d4 > T::zero()))
+        {
             return true;
         }
 
-        if orientations[0] == Orientation::Collinear && self.includes_point(other.0) {
-            return true;
-        }
-        if orientations[1] == Orientation::Collinear && self.includes_point(other.1) {
-            return true;
-        }
-        if orientations[2] == Orientation::Collinear && other.includes_point(self.0) {
-            return true;
-        }
-        if orientations[3] == Orientation::Collinear && other.includes_point(self.1) {
-            return true;
-        }
+        // this algorithm checks only the general case (described in geeks for geeks)
 
         false
     }
@@ -81,25 +74,6 @@ impl<T: Scalar> Line2D<T> {
             p.x <= (p.y - self.0.y) * (self.1.x - self.0.x) / (self.1.y - self.0.y) + self.0.x;
 
         sects_y && sects_x
-    }
-}
-
-#[derive(PartialEq, PartialOrd)]
-enum Orientation {
-    Clockwise,
-    Counterclockwise,
-    Collinear,
-}
-
-fn orientation<T: Scalar>(p: Vec2<T>, q: Vec2<T>, r: Vec2<T>) -> Orientation {
-    let val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
-
-    if val == T::zero() {
-        Orientation::Collinear
-    } else if val < T::zero() {
-        Orientation::Counterclockwise
-    } else {
-        Orientation::Clockwise
     }
 }
 
