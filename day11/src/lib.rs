@@ -1,3 +1,6 @@
+pub mod part1;
+pub mod part2;
+
 use std::fmt::Debug;
 
 #[derive(PartialEq, Eq, Hash)]

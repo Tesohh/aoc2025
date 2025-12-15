@@ -3,34 +3,10 @@ use std::{
     ops::{Add, Div, Mul, Neg, Sub},
 };
 
-pub trait Number:
-    Sized
-    + Display
-    + Add<Output = Self>
-    + Sub<Output = Self>
-    + Mul<Output = Self>
-    + Div<Output = Self>
-    + Copy
-    + PartialEq
-    + PartialOrd
-{
-}
-
-impl<T> Number for T where
-    T: Sized
-        + Display
-        + Add<Output = T>
-        + Sub<Output = T>
-        + Mul<Output = T>
-        + Div<Output = T>
-        + Copy
-        + PartialEq
-        + PartialOrd
-{
-}
+use crate::Scalar;
 
 #[derive(Hash, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-pub struct Vec2<T: Number> {
+pub struct Vec2<T: Scalar> {
     pub x: T,
     pub y: T,
 }
@@ -62,7 +38,7 @@ impl TryInto<Vec2u> for Vec2i {
     }
 }
 
-impl<T: Number> Debug for Vec2<T> {
+impl<T: Scalar> Debug for Vec2<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "Vec2{{{}, {}}}", self.x, self.y)
     }
@@ -80,7 +56,7 @@ impl TryInto<Vec2i> for Vec2u {
     }
 }
 
-impl<T: Number> Vec2<T> {
+impl<T: Scalar> Vec2<T> {
     pub const fn new(x: T, y: T) -> Self {
         Vec2 { x, y }
     }
@@ -97,19 +73,19 @@ impl<T: Number> Vec2<T> {
     }
 }
 
-impl<T: Number> From<(T, T)> for Vec2<T> {
+impl<T: Scalar> From<(T, T)> for Vec2<T> {
     fn from((x, y): (T, T)) -> Self {
         Self { x, y }
     }
 }
 
-impl<T: Number> Display for Vec2<T> {
+impl<T: Scalar> Display for Vec2<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "({}, {})", self.x, self.y)
     }
 }
 
-impl<T: Number> Add for Vec2<T> {
+impl<T: Scalar> Add for Vec2<T> {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self::Output {
@@ -120,7 +96,7 @@ impl<T: Number> Add for Vec2<T> {
     }
 }
 
-impl<T: Number> Sub for Vec2<T> {
+impl<T: Scalar> Sub for Vec2<T> {
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self::Output {
@@ -131,7 +107,7 @@ impl<T: Number> Sub for Vec2<T> {
     }
 }
 
-impl<T: Number> Mul for Vec2<T> {
+impl<T: Scalar> Mul for Vec2<T> {
     type Output = Self;
 
     fn mul(self, rhs: Self) -> Self::Output {
@@ -142,7 +118,7 @@ impl<T: Number> Mul for Vec2<T> {
     }
 }
 
-impl<T: Number> Div for Vec2<T> {
+impl<T: Scalar> Div for Vec2<T> {
     type Output = Self;
 
     fn div(self, rhs: Self) -> Self::Output {
@@ -153,7 +129,7 @@ impl<T: Number> Div for Vec2<T> {
     }
 }
 
-impl<T: Number + Neg<Output = T>> Neg for Vec2<T> {
+impl<T: Scalar + Neg<Output = T>> Neg for Vec2<T> {
     type Output = Self;
 
     fn neg(self) -> Self::Output {

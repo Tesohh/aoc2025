@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use day11::{Server, str_to_char3};
+use day11::{Server, part1, part2, str_to_char3};
 use itertools::Itertools;
 
 fn main() {
@@ -23,30 +23,6 @@ fn main() {
             servers.insert(key, connections);
         });
 
-    let mut paths = 0;
-
-    let mut visitors: Vec<&Server> = vec![];
-    visitors.extend(servers.get(&Server::new("you")).unwrap());
-
-    loop {
-        let mut new_visitors = vec![];
-        for visitor in &visitors {
-            if **visitor == Server::new("out") {
-                paths += 1;
-                continue;
-            }
-
-            let outputs = servers.get(visitor).unwrap();
-            new_visitors.extend(outputs);
-        }
-
-        if new_visitors.is_empty() {
-            break;
-        }
-
-        visitors = new_visitors;
-        dbg!(&visitors);
-    }
-
-    dbg!(paths);
+    println!("part1: {}", part1::part1(&servers));
+    println!("part2: {}", part2::part2(&servers));
 }

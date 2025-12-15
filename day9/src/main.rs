@@ -1,14 +1,6 @@
-use aoc::Vec2i;
-use itertools::{Itertools, iproduct};
+use aoc::{Polygon, Vec2i};
 
-fn main() {
-    let points: Vec<Vec2i> = aoc::Input::from_args()
-        .lines()
-        .iter()
-        .filter_map(|line| line.split_once(","))
-        .map(|(a, b)| Vec2i::new(a.parse().unwrap(), b.parse().unwrap()))
-        .collect();
-
+fn part1(points: &[Vec2i]) -> isize {
     let mut product: Vec<(Vec2i, Vec2i, isize)> = vec![];
     for i in 0..points.len() {
         for j in 0..points.len() {
@@ -22,5 +14,42 @@ fn main() {
         }
     }
     product.sort_by_key(|&(_, _, area)| area);
+    product.last().unwrap().2
+}
+
+fn part2(points: &[Vec2i]) -> isize {
+    let poly = Polygon::from(points);
+
+    let mut product: Vec<(Vec2i, Vec2i, isize)> = vec![];
+    for i in 0..points.len() {
+        for j in 0..points.len() {
+            if j > i {
+                let a = points[i];
+                let b = points[j];
+
+                let rect = Polygon::rect_from_opposite_corners(&a, &b);
+                if !poly.full_overlap(&rect) {
+                    continue;
+                }
+
+                let area = ((b.x - a.x).abs() + 1) * ((b.y - a.y).abs() + 1);
+                product.push((a, b, area));
+            }
+        }
+    }
+    product.sort_by_key(|&(_, _, area)| area);
     dbg!(product.last().unwrap());
+    product.last().unwrap().2
+}
+
+fn main() {
+    let points: Vec<Vec2i> = aoc::Input::from_args()
+        .lines()
+        .iter()
+        .filter_map(|line| line.split_once(","))
+        .map(|(a, b)| Vec2i::new(a.parse().unwrap(), b.parse().unwrap()))
+        .collect();
+
+    println!("part1: {}", part1(&points));
+    println!("part2: {}", part2(&points));
 }

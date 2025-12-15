@@ -4,10 +4,10 @@ use std::{
     ops::{Add, Div, Mul, Neg, Sub},
 };
 
-use crate::Number;
+use crate::Scalar;
 
 #[derive(Hash, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-pub struct Vec3<T: Number> {
+pub struct Vec3<T: Scalar> {
     pub x: T,
     pub y: T,
     pub z: T,
@@ -56,7 +56,7 @@ impl TryInto<Vec3i> for Vec3u {
     }
 }
 
-impl<T: Number> Vec3<T> {
+impl<T: Scalar> Vec3<T> {
     pub const fn new(x: T, y: T, z: T) -> Self {
         Vec3 { x, y, z }
     }
@@ -74,25 +74,25 @@ impl<T: Number> Vec3<T> {
     }
 }
 
-impl<T: Number> From<(T, T, T)> for Vec3<T> {
+impl<T: Scalar> From<(T, T, T)> for Vec3<T> {
     fn from((x, y, z): (T, T, T)) -> Self {
         Self { x, y, z }
     }
 }
 
-impl<T: Number> Display for Vec3<T> {
+impl<T: Scalar> Display for Vec3<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "({}, {}, {})", self.x, self.y, self.z)
     }
 }
 
-impl<T: Number> Debug for Vec3<T> {
+impl<T: Scalar> Debug for Vec3<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "Vec3{{{}, {}, {}}}", self.x, self.y, self.z)
     }
 }
 
-impl<T: Number> Add for Vec3<T> {
+impl<T: Scalar> Add for Vec3<T> {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self::Output {
@@ -104,7 +104,7 @@ impl<T: Number> Add for Vec3<T> {
     }
 }
 
-impl<T: Number> Sub for Vec3<T> {
+impl<T: Scalar> Sub for Vec3<T> {
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self::Output {
@@ -116,7 +116,7 @@ impl<T: Number> Sub for Vec3<T> {
     }
 }
 
-impl<T: Number> Mul for Vec3<T> {
+impl<T: Scalar> Mul for Vec3<T> {
     type Output = Self;
 
     fn mul(self, rhs: Self) -> Self::Output {
@@ -128,7 +128,7 @@ impl<T: Number> Mul for Vec3<T> {
     }
 }
 
-impl<T: Number> Div for Vec3<T> {
+impl<T: Scalar> Div for Vec3<T> {
     type Output = Self;
 
     fn div(self, rhs: Self) -> Self::Output {
@@ -140,7 +140,7 @@ impl<T: Number> Div for Vec3<T> {
     }
 }
 
-impl<T: Number + Neg<Output = T>> Neg for Vec3<T> {
+impl<T: Scalar + Neg<Output = T>> Neg for Vec3<T> {
     type Output = Self;
 
     fn neg(self) -> Self::Output {
